@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { InvitationPreview } from "@/components/invitation-preview";
+import { InvitationExperience } from "@/components/invitation-experience";
 import { getCopy } from "@/lib/i18n";
 import { getInvitationByIdentifier } from "@/lib/store";
 import { InvitationRecord } from "@/lib/types";
@@ -33,9 +33,5 @@ export default async function PublicInvitationPage({
     );
   }
 
-  return (
-    <main className="min-h-screen" style={{ backgroundColor: invitationRecord.design.colorPalette.background }}>
-      <InvitationPreview invitation={invitationRecord} publicMode />
-    </main>
-  );
+  return <InvitationExperience invitation={invitationRecord} />;
 }
