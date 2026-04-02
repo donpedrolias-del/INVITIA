@@ -62,11 +62,13 @@ function hydrateInvitation(row: Record<string, any>): InvitationRecord {
 }
 
 function serializeInvitation(record: InvitationRecord) {
+  const { experience, ...rest } = record;
+
   return {
-    ...record,
+    ...rest,
     design: {
       ...record.design,
-      experience: record.experience
+      experience
     }
   };
 }
