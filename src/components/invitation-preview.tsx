@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { InvitationRecord, LayoutBlock } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +13,10 @@ function getSpacingClass(block: LayoutBlock) {
   if (block.spacing === "tight") return "gap-3 py-4";
   if (block.spacing === "airy") return "gap-8 py-10";
   return "gap-5 py-6";
+}
+
+function InvitationImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  return <img src={src} alt={alt} className={className} />;
 }
 
 export function InvitationPreview({
@@ -49,7 +52,7 @@ export function InvitationPreview({
                 className={cn("relative flex min-h-[360px] flex-col justify-end p-8 md:p-12", getAlignClass(block), getSpacingClass(block))}
               >
                 <div className="absolute inset-0">
-                  <Image src={heroImage} alt={content.title} fill className="object-cover" />
+                  <InvitationImage src={heroImage} alt={content.title} className="h-full w-full object-cover" />
                   <div
                     className="absolute inset-0 bg-hero-haze"
                     style={{
@@ -124,7 +127,7 @@ export function InvitationPreview({
             return (
               <section key={block.id} className={cn("flex flex-col px-8 md:px-12", getAlignClass(block), getSpacingClass(block))}>
                 <div className="relative h-72 w-full overflow-hidden rounded-[28px]">
-                  <Image src={heroImage} alt={content.title} fill className="object-cover" />
+                  <InvitationImage src={heroImage} alt={content.title} className="h-full w-full object-cover" />
                 </div>
               </section>
             );

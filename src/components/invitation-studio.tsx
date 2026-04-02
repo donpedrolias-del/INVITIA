@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { getCopy, getEventTypeOptions } from "@/lib/i18n";
 import { InvitationPreview } from "@/components/invitation-preview";
 import { InvitationRecord, InvitationFormData, Language, LayoutBlock } from "@/lib/types";
@@ -42,6 +42,15 @@ async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> 
   }
 
   return json;
+}
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Unable to read image file"));
+    reader.readAsDataURL(file);
+  });
 }
 
 function EditorBlock({
@@ -108,6 +117,26 @@ export function InvitationStudio() {
 
   function updateField<Key extends keyof InvitationFormData>(key: Key, value: InvitationFormData[Key]) {
     setForm((current) => ({ ...current, [key]: value }));
+  }
+
+  async function handleImageUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      updateField("heroImage", dataUrl);
+      setInvitation((current) =>
+        current
+          ? {
+              ...current,
+              heroImage: dataUrl
+            }
+          : current
+      );
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Unable to load image");
+    }
   }
 
   async function handleGenerate() {
@@ -217,9 +246,7 @@ export function InvitationStudio() {
       ? `/invite/${invitation.slug || invitation.id}`
       : "";
 
-  const previewInvitation = invitation
-    ? invitation
-    : null;
+  const previewInvitation = invitation ? invitation : null;
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-10 px-4 py-8 md:px-8">
@@ -345,15 +372,32 @@ export function InvitationStudio() {
             </label>
           </div>
 
-          <label className="space-y-2">
-            <span className="text-sm">{t.heroImage}</span>
-            <input
-              className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
-              value={form.heroImage}
-              onChange={(event) => updateField("heroImage", event.target.value)}
-              placeholder="https://..."
-            />
-          </label>
+          <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+            <label className="space-y-2">
+              <span className="text-sm">{t.heroImage}</span>
+              <input
+                type="file"
+                accept="image/*"
+                className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 file:mr-4 file:rounded-full file:border-0 file:bg-slate-950 file:px-4 file:py-2 file:text-sm file:text-white"
+                onChange={handleImageUpload}
+              />
+            </label>
+            {form.heroImage ? (
+              <button
+                type="button"
+                className="rounded-full border border-black/10 px-4 py-3 text-sm"
+                onClick={() => updateField("heroImage", "")}
+              >
+                {form.language === "fr" ? "Retirer l'image" : "Remove image"}
+              </button>
+            ) : null}
+          </div>
+
+          {form.heroImage ? (
+            <div className="overflow-hidden rounded-[24px] border border-black/10 bg-white p-2">
+              <img src={form.heroImage} alt="Selected invitation cover" className="h-48 w-full rounded-[18px] object-cover" />
+            </div>
+          ) : null}
 
           <label className="space-y-2">
             <span className="text-sm">{t.description}</span>
@@ -531,6 +575,36 @@ export function InvitationStudio() {
                       }
                     />
                   </label>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+                  <label className="space-y-2">
+                    <span className="text-sm">{t.heroImage}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 file:mr-4 file:rounded-full file:border-0 file:bg-slate-950 file:px-4 file:py-2 file:text-sm file:text-white"
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                  {previewInvitation.heroImage ? (
+                    <button
+                      type="button"
+                      className="rounded-full border border-black/10 px-4 py-3 text-sm"
+                      onClick={() =>
+                        setInvitation((current) =>
+                          current
+                            ? {
+                                ...current,
+                                heroImage: ""
+                              }
+                            : current
+                        )
+                      }
+                    >
+                      {form.language === "fr" ? "Retirer l'image" : "Remove image"}
+                    </button>
+                  ) : null}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
