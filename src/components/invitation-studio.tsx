@@ -249,19 +249,19 @@ export function InvitationStudio() {
   const previewInvitation = invitation ? invitation : null;
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-10 px-4 py-8 md:px-8">
-      <section className="overflow-hidden rounded-[36px] border border-white/40 bg-[linear-gradient(135deg,#102033_0%,#7a3e33_45%,#d7ba84_100%)] p-8 text-white shadow-glow md:p-12">
+    <div className="mx-auto flex min-h-screen max-w-[1380px] flex-col gap-12 px-5 py-10 md:px-10">
+      <section className="relative overflow-hidden rounded-[42px] border border-[#f1d6a2]/30 bg-[radial-gradient(circle_at_top_left,rgba(241,214,162,0.28),transparent_24%),linear-gradient(135deg,#120f1f_0%,#362131_34%,#7f4f3d_69%,#efd3a0_100%)] p-8 text-white shadow-[0_30px_120px_rgba(16,12,21,0.34)] md:p-14">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_0.7fr]">
           <div className="space-y-6">
-            <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.3em]">
+            <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.45em]">
               {t.appName}
             </span>
             <div className="space-y-4">
-              <h1 className="max-w-3xl text-4xl md:text-6xl">{t.heroTitle}</h1>
-              <p className="max-w-2xl text-base text-white/80 md:text-lg">{t.heroBody}</p>
+              <h1 className="max-w-4xl text-5xl leading-none md:text-7xl">{t.heroTitle}</h1>
+              <p className="max-w-2xl text-base leading-7 text-white/82 md:text-lg">{t.heroBody}</p>
             </div>
           </div>
-          <div className="rounded-[28px] bg-white/10 p-6 backdrop-blur">
+          <div className="rounded-[30px] border border-white/15 bg-white/10 p-6 backdrop-blur-xl">
             <p className="text-sm uppercase tracking-[0.28em] text-white/70">{t.scenariosTitle}</p>
             <div className="mt-5 grid gap-3">
               {scenarios[form.language].map((scenario) => (
@@ -275,14 +275,14 @@ export function InvitationStudio() {
       </section>
 
       <div className="grid gap-8 xl:grid-cols-[0.92fr_1.08fr]">
-        <section className="space-y-6 rounded-[32px] border border-black/5 bg-[#fffaf2] p-6 shadow-[0_10px_40px_rgba(24,28,40,0.06)] md:p-8">
+        <section className="space-y-6 rounded-[36px] border border-[#d9c5ab]/80 bg-[linear-gradient(180deg,rgba(255,252,247,0.98),rgba(247,239,228,0.96))] p-6 shadow-[0_24px_90px_rgba(43,29,18,0.08)] md:p-8">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-sm uppercase tracking-[0.26em] text-slate-500">{t.startLabel}</p>
               <h2 className="mt-2 text-2xl text-slate-900">{t.details}</h2>
             </div>
             <select
-              className="rounded-full border border-black/10 bg-white px-4 py-2"
+              className="rounded-full border border-[#d9c6ad] bg-white/80 px-4 py-2 shadow-sm"
               value={form.language}
               onChange={(event) => updateField("language", event.target.value as Language)}
             >
@@ -295,7 +295,7 @@ export function InvitationStudio() {
             <label className="space-y-2">
               <span className="text-sm">{t.eventType}</span>
               <select
-                className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+                className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
                 value={form.eventType}
                 onChange={(event) => updateField("eventType", event.target.value as InvitationFormData["eventType"])}
               >
@@ -310,7 +310,7 @@ export function InvitationStudio() {
             <label className="space-y-2">
               <span className="text-sm">{t.theme}</span>
               <input
-                className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+                className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
                 value={form.theme}
                 onChange={(event) => updateField("theme", event.target.value)}
                 placeholder={form.language === "fr" ? "Ex. Jardin doré contemporain" : "Ex. Contemporary golden garden"}
@@ -320,7 +320,7 @@ export function InvitationStudio() {
             <label className="space-y-2">
               <span className="text-sm">{t.title}</span>
               <input
-                className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+                className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
                 value={form.title}
                 onChange={(event) => updateField("title", event.target.value)}
               />
@@ -329,7 +329,7 @@ export function InvitationStudio() {
             <label className="space-y-2">
               <span className="text-sm">{t.hostName}</span>
               <input
-                className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+                className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
                 value={form.hostName}
                 onChange={(event) => updateField("hostName", event.target.value)}
               />
@@ -338,7 +338,7 @@ export function InvitationStudio() {
             <label className="space-y-2">
               <span className="text-sm">{t.dateTime}</span>
               <input
-                className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+                className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
                 value={form.dateTime}
                 onChange={(event) => updateField("dateTime", event.target.value)}
               />
@@ -347,7 +347,7 @@ export function InvitationStudio() {
             <label className="space-y-2">
               <span className="text-sm">{t.venue}</span>
               <input
-                className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+                className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
                 value={form.venue}
                 onChange={(event) => updateField("venue", event.target.value)}
               />
@@ -356,7 +356,7 @@ export function InvitationStudio() {
             <label className="space-y-2">
               <span className="text-sm">{t.dressCode}</span>
               <input
-                className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+                className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
                 value={form.dressCode}
                 onChange={(event) => updateField("dressCode", event.target.value)}
               />
@@ -365,7 +365,7 @@ export function InvitationStudio() {
             <label className="space-y-2">
               <span className="text-sm">{t.contactInfo}</span>
               <input
-                className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+                className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
                 value={form.contactInfo}
                 onChange={(event) => updateField("contactInfo", event.target.value)}
               />
@@ -378,7 +378,7 @@ export function InvitationStudio() {
               <input
                 type="file"
                 accept="image/*"
-                className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 file:mr-4 file:rounded-full file:border-0 file:bg-slate-950 file:px-4 file:py-2 file:text-sm file:text-white"
+                className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7] file:mr-4 file:rounded-full file:border-0 file:bg-slate-950 file:px-4 file:py-2 file:text-sm file:text-white"
                 onChange={handleImageUpload}
               />
             </label>
@@ -402,7 +402,7 @@ export function InvitationStudio() {
           <label className="space-y-2">
             <span className="text-sm">{t.description}</span>
             <textarea
-              className="min-h-28 w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+              className="min-h-28 w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
               value={form.description}
               onChange={(event) => updateField("description", event.target.value)}
             />
@@ -411,7 +411,7 @@ export function InvitationStudio() {
           <label className="space-y-2">
             <span className="text-sm">{t.prompt}</span>
             <textarea
-              className="min-h-28 w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+              className="min-h-28 w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
               value={form.prompt}
               onChange={(event) => updateField("prompt", event.target.value)}
               placeholder={
@@ -434,7 +434,7 @@ export function InvitationStudio() {
         </section>
 
         <section className="space-y-6">
-          <div className="rounded-[32px] border border-black/5 bg-white p-6 shadow-[0_10px_40px_rgba(24,28,40,0.06)] md:p-8">
+          <div className="rounded-[36px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(250,245,238,0.96))] p-6 shadow-[0_24px_90px_rgba(34,23,16,0.08)] md:p-8">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm uppercase tracking-[0.26em] text-slate-500">{t.preview}</p>
@@ -583,7 +583,7 @@ export function InvitationStudio() {
                     <input
                       type="file"
                       accept="image/*"
-                      className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 file:mr-4 file:rounded-full file:border-0 file:bg-slate-950 file:px-4 file:py-2 file:text-sm file:text-white"
+                      className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7] file:mr-4 file:rounded-full file:border-0 file:bg-slate-950 file:px-4 file:py-2 file:text-sm file:text-white"
                       onChange={handleImageUpload}
                     />
                   </label>

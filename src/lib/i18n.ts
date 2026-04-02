@@ -2,11 +2,11 @@ import { EventType, Language } from "@/lib/types";
 
 export const copy = {
   fr: {
-    appName: "Orvia Invitations",
-    heroTitle: "Créez des invitations élégantes, générées par l'IA.",
+    appName: "INVITIA",
+    heroTitle: "Des invitations premium qui donnent envie d'etre partagees.",
     heroBody:
-      "Concevez des pages d'invitation multilingues pour vos événements en quelques minutes, puis personnalisez chaque détail visuel avant publication.",
-    startLabel: "Paramètres de départ",
+      "INVITIA transforme vos idees en invitations elegantes, modernes et prêtes à publier, avec une direction visuelle plus haut de gamme et un rendu pensé pour marquer les invites dès le premier regard.",
+    startLabel: "Atelier de création",
     eventType: "Type d'événement",
     language: "Langue",
     generic: "Générique",
@@ -38,11 +38,11 @@ export const copy = {
     publicLink: "Lien public",
     copyLink: "Copier le lien",
     blocks: "Blocs",
-    colors: "Couleurs",
+    colors: "Palette",
     typography: "Typographies",
     layout: "Mise en page",
     noPreview:
-      "La prévisualisation apparaîtra ici après la génération. Vous pourrez ensuite ajuster le texte, les couleurs et la structure.",
+      "L'aperçu premium apparaîtra ici après la génération. Vous pourrez ensuite ajuster le texte, les couleurs, l'image et la structure.",
     aiError:
       "La génération a échoué. Vérifie les champs principaux ou relance avec un prompt plus précis.",
     publishHint:
@@ -50,18 +50,18 @@ export const copy = {
     notFound: "Invitation introuvable",
     notPublished: "Cette invitation n'est pas encore publique.",
     backHome: "Retour à l'atelier",
-    publishReady: "Préparez le brouillon, puis rendez-le public quand tout est prêt.",
-    scenariosTitle: "Cas de lancement couverts",
+    publishReady: "Préparez le brouillon, peaufinez le rendu, puis rendez-le public quand tout est prêt.",
+    scenariosTitle: "Collections de départ",
     weddingScenario: "Mariage romantique",
     birthdayScenario: "Anniversaire festif",
     corporateScenario: "Événement professionnel soigné"
   },
   en: {
-    appName: "Orvia Invitations",
-    heroTitle: "Create elegant invitations generated with AI.",
+    appName: "INVITIA",
+    heroTitle: "Premium invitations designed to feel instantly shareable.",
     heroBody:
-      "Design multilingual invitation pages for your events in minutes, then refine every visual detail before publishing.",
-    startLabel: "Starting settings",
+      "INVITIA turns your ideas into elegant, modern invitation pages with a stronger art direction and a polished visual finish built to impress guests at first glance.",
+    startLabel: "Creation studio",
     eventType: "Event type",
     language: "Language",
     generic: "Generic",
@@ -77,7 +77,7 @@ export const copy = {
     venue: "Venue",
     dressCode: "Dress code",
     contactInfo: "Contact",
-    heroImage: "Hero image",
+    heroImage: "Cover image",
     theme: "Theme",
     prompt: "Creative prompt",
     generate: "Generate invitation",
@@ -93,19 +93,19 @@ export const copy = {
     publicLink: "Public link",
     copyLink: "Copy link",
     blocks: "Blocks",
-    colors: "Colors",
+    colors: "Palette",
     typography: "Typography",
     layout: "Layout",
     noPreview:
-      "The preview will appear here after generation. You can then refine text, colors, and structure.",
+      "Your premium preview will appear here after generation. You can then refine text, colors, imagery, and structure.",
     aiError:
       "Generation failed. Check the main fields or retry with a more specific prompt.",
     publishHint: "The page stays private until you publish it manually.",
     notFound: "Invitation not found",
     notPublished: "This invitation is not public yet.",
     backHome: "Back to studio",
-    publishReady: "Polish the draft first, then make it public when it is ready.",
-    scenariosTitle: "Launch scenarios covered",
+    publishReady: "Polish the draft, refine the look, then make it public when it feels ready.",
+    scenariosTitle: "Launch collections",
     weddingScenario: "Romantic wedding",
     birthdayScenario: "Playful birthday",
     corporateScenario: "Polished corporate event"

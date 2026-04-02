@@ -17,8 +17,8 @@ const accent = Sora({
 });
 
 export const metadata = {
-  title: "Orvia Invitations",
-  description: "AI invitation studio for multilingual event pages."
+  title: "INVITIA",
+  description: "Premium AI invitation studio for elegant event pages."
 };
 
 export default function RootLayout({
