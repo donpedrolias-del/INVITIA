@@ -1,9 +1,9 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
-import { getCopy, getEventTypeOptions } from "@/lib/i18n";
 import { InvitationPreview } from "@/components/invitation-preview";
-import { InvitationRecord, InvitationFormData, Language, LayoutBlock } from "@/lib/types";
+import { getCopy, getEventTypeOptions } from "@/lib/i18n";
+import { InvitationFormData, InvitationMoment, InvitationRecord, GuestDetail, Language, LayoutBlock } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const initialForm: InvitationFormData = {
@@ -22,8 +22,8 @@ const initialForm: InvitationFormData = {
 };
 
 const scenarios = {
-  fr: ["Mariage romantique", "Anniversaire festif", "Événement professionnel soigné"],
-  en: ["Romantic wedding", "Playful birthday", "Polished corporate event"]
+  fr: ["Mariage editorial", "Anniversaire chic", "Evenement signature"],
+  en: ["Editorial wedding", "Chic birthday", "Signature event"]
 };
 
 async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
@@ -106,14 +106,62 @@ function EditorBlock({
   );
 }
 
+function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-[28px] border border-black/8 bg-white/78 p-5 shadow-sm">
+      <h3 className="text-lg text-slate-900">{title}</h3>
+      <div className="mt-4 space-y-4">{children}</div>
+    </div>
+  );
+}
+
+function updateMomentField(
+  invitation: InvitationRecord,
+  index: number,
+  key: keyof InvitationMoment,
+  value: string
+): InvitationRecord {
+  const moments = invitation.experience.moments.map((moment, momentIndex) =>
+    momentIndex === index ? { ...moment, [key]: value } : moment
+  );
+
+  return {
+    ...invitation,
+    experience: {
+      ...invitation.experience,
+      moments
+    }
+  };
+}
+
+function updateGuestField(
+  invitation: InvitationRecord,
+  index: number,
+  key: keyof GuestDetail,
+  value: string
+): InvitationRecord {
+  const guestDetails = invitation.experience.guestDetails.map((detail, detailIndex) =>
+    detailIndex === index ? { ...detail, [key]: value } : detail
+  );
+
+  return {
+    ...invitation,
+    experience: {
+      ...invitation.experience,
+      guestDetails
+    }
+  };
+}
+
 export function InvitationStudio() {
   const [form, setForm] = useState<InvitationFormData>(initialForm);
   const [invitation, setInvitation] = useState<InvitationRecord | null>(null);
   const [busyState, setBusyState] = useState<"idle" | "generating" | "saving" | "publishing">("idle");
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState("");
 
   const t = getCopy(form.language);
   const eventOptions = getEventTypeOptions(form.language);
+  const isFrench = form.language === "fr";
 
   function updateField<Key extends keyof InvitationFormData>(key: Key, value: InvitationFormData[Key]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -183,7 +231,7 @@ export function InvitationStudio() {
     try {
       setBusyState("saving");
       setError("");
-      const saved = await fetchJson<InvitationRecord>(`/api/invitations/${next.id}`, {
+      const saved = await fetchJson<InvitationRecord>("/api/invitations/" + next.id, {
         method: "PATCH",
         body: JSON.stringify(next)
       });
@@ -213,7 +261,8 @@ export function InvitationStudio() {
     if (!invitation) return;
     try {
       setBusyState("publishing");
-      const saved = await fetchJson<InvitationRecord>(`/api/invitations/${invitation.id}/publish`, {
+      setError("");
+      const saved = await fetchJson<InvitationRecord>("/api/invitations/" + invitation.id + "/publish", {
         method: "POST"
       });
       setInvitation(saved);
@@ -242,14 +291,12 @@ export function InvitationStudio() {
   }
 
   const publicUrl =
-    invitation && invitation.status === "published"
-      ? `/invite/${invitation.slug || invitation.id}`
-      : "";
+    invitation && invitation.status === "published" ? "/invite/" + (invitation.slug || invitation.id) : "";
 
-  const previewInvitation = invitation ? invitation : null;
+  const previewInvitation = invitation || null;
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-[1380px] flex-col gap-12 px-5 py-10 md:px-10">
+    <div className="mx-auto flex min-h-screen max-w-[1450px] flex-col gap-12 px-5 py-10 md:px-10">
       <section className="relative overflow-hidden rounded-[42px] border border-[#f1d6a2]/30 bg-[radial-gradient(circle_at_top_left,rgba(241,214,162,0.28),transparent_24%),linear-gradient(135deg,#120f1f_0%,#362131_34%,#7f4f3d_69%,#efd3a0_100%)] p-8 text-white shadow-[0_30px_120px_rgba(16,12,21,0.34)] md:p-14">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_0.7fr]">
           <div className="space-y-6">
@@ -274,7 +321,7 @@ export function InvitationStudio() {
         </div>
       </section>
 
-      <div className="grid gap-8 xl:grid-cols-[0.92fr_1.08fr]">
+      <div className="grid gap-8 xl:grid-cols-[0.78fr_1.22fr]">
         <section className="space-y-6 rounded-[36px] border border-[#d9c5ab]/80 bg-[linear-gradient(180deg,rgba(255,252,247,0.98),rgba(247,239,228,0.96))] p-6 shadow-[0_24px_90px_rgba(43,29,18,0.08)] md:p-8">
           <div className="flex items-center justify-between gap-4">
             <div>
@@ -313,7 +360,7 @@ export function InvitationStudio() {
                 className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
                 value={form.theme}
                 onChange={(event) => updateField("theme", event.target.value)}
-                placeholder={form.language === "fr" ? "Ex. Jardin doré contemporain" : "Ex. Contemporary golden garden"}
+                placeholder={isFrench ? "Ex. Jardin dore editorial" : "Ex. Editorial golden garden"}
               />
             </label>
 
@@ -341,6 +388,7 @@ export function InvitationStudio() {
                 className="w-full rounded-2xl border border-[#dcc8b0] bg-white/85 px-4 py-3 shadow-sm outline-none transition focus:border-[#a97747] focus:ring-2 focus:ring-[#e9d3b7]"
                 value={form.dateTime}
                 onChange={(event) => updateField("dateTime", event.target.value)}
+                placeholder={isFrench ? "Ex. 12 Juin 2026 - 16:00" : "Ex. June 12, 2026 - 4:00 PM"}
               />
             </label>
 
@@ -388,7 +436,7 @@ export function InvitationStudio() {
                 className="rounded-full border border-black/10 px-4 py-3 text-sm"
                 onClick={() => updateField("heroImage", "")}
               >
-                {form.language === "fr" ? "Retirer l'image" : "Remove image"}
+                {isFrench ? "Retirer image" : "Remove image"}
               </button>
             ) : null}
           </div>
@@ -415,9 +463,9 @@ export function InvitationStudio() {
               value={form.prompt}
               onChange={(event) => updateField("prompt", event.target.value)}
               placeholder={
-                form.language === "fr"
-                  ? "Ex. Une invitation moderne, lumineuse, luxe discret, fleurs ivoire, ambiance éditoriale."
-                  : "Ex. Modern luminous invitation, understated luxury, ivory florals, editorial atmosphere."
+                isFrench
+                  ? "Ex. Invitation editoriale, luxe doux, fleurs ivoire, ouverture cinematographique, details impecables."
+                  : "Ex. Editorial invitation, soft luxury, ivory florals, cinematic opening, impeccable details."
               }
             />
           </label>
@@ -427,7 +475,7 @@ export function InvitationStudio() {
           <button
             className="inline-flex items-center justify-center rounded-full bg-slate-950 px-6 py-3 text-white transition hover:bg-slate-800 disabled:opacity-60"
             onClick={handleGenerate}
-            disabled={busyState === "generating" || busyState === "saving" || busyState === "publishing"}
+            disabled={busyState !== "idle"}
           >
             {busyState === "generating" ? t.regenerate : t.generate}
           </button>
@@ -444,9 +492,7 @@ export function InvitationStudio() {
                 <span
                   className={cn(
                     "rounded-full px-4 py-2 text-xs uppercase tracking-[0.28em]",
-                    invitation.status === "published"
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-amber-100 text-amber-700"
+                    invitation.status === "published" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
                   )}
                 >
                   {invitation.status === "published" ? t.published : t.draft}
@@ -462,15 +508,10 @@ export function InvitationStudio() {
               <div className="mt-6 space-y-6">
                 <InvitationPreview invitation={previewInvitation} />
 
-                <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-                  <div className="space-y-4 rounded-[28px] bg-[#fff7ea] p-5">
-                    <h3 className="text-lg text-slate-900">{t.colors}</h3>
+                <div className="grid gap-6 xl:grid-cols-2">
+                  <SectionCard title={isFrench ? "Palette" : "Palette"}>
                     <div className="grid gap-3">
-                      {(
-                        Object.keys(previewInvitation.design.colorPalette) as Array<
-                          keyof InvitationRecord["design"]["colorPalette"]
-                        >
-                      ).map((key) => (
+                      {(Object.keys(previewInvitation.design.colorPalette) as Array<keyof InvitationRecord["design"]["colorPalette"]>).map((key) => (
                         <label key={key} className="space-y-2 text-sm">
                           <span className="capitalize">{key}</span>
                           <input
@@ -497,33 +538,327 @@ export function InvitationStudio() {
                         </label>
                       ))}
                     </div>
-                  </div>
+                  </SectionCard>
 
-                  <div className="space-y-4 rounded-[28px] bg-[#f6f1ff] p-5">
-                    <h3 className="text-lg text-slate-900">{t.layout}</h3>
+                  <SectionCard title={isFrench ? "Mise en page" : "Layout"}>
                     <div className="space-y-3">
                       {previewInvitation.design.layoutConfig.map((block, index) => (
                         <EditorBlock key={block.id} block={block} onChange={(next) => updateLayout(index, next)} />
                       ))}
                     </div>
-                  </div>
+                  </SectionCard>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2">
-                    <span className="text-sm">{t.title}</span>
+                <div className="grid gap-6 xl:grid-cols-2">
+                  <SectionCard title={isFrench ? "Contenu principal" : "Main content"}>
+                    <label className="space-y-2 text-sm">
+                      <span>{t.title}</span>
+                      <input
+                        className="w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.content.title}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  title: event.target.value,
+                                  content: {
+                                    ...current.content,
+                                    title: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                    <label className="space-y-2 text-sm">
+                      <span>{t.hostName}</span>
+                      <input
+                        className="w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.content.subtitle}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  hostName: event.target.value,
+                                  content: {
+                                    ...current.content,
+                                    subtitle: event.target.value
+                                  },
+                                  experience: {
+                                    ...current.experience,
+                                    coverHeadline: event.target.value || current.experience.coverHeadline,
+                                    signatureLine:
+                                      current.language === "fr"
+                                        ? (event.target.value || current.experience.coverHeadline) + " vous attendent"
+                                        : (event.target.value || current.experience.coverHeadline) + " are waiting for you"
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                    <label className="space-y-2 text-sm">
+                      <span>{t.description}</span>
+                      <textarea
+                        className="min-h-28 w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.content.description}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  description: event.target.value,
+                                  content: {
+                                    ...current.content,
+                                    description: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                  </SectionCard>
+
+                  <SectionCard title={isFrench ? "Couverture" : "Cover"}>
+                    <label className="space-y-2 text-sm">
+                      <span>{isFrench ? "Titre couverture" : "Cover headline"}</span>
+                      <input
+                        className="w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.experience.coverHeadline}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  experience: {
+                                    ...current.experience,
+                                    coverHeadline: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                    <label className="space-y-2 text-sm">
+                      <span>{isFrench ? "Message couverture" : "Cover message"}</span>
+                      <textarea
+                        className="min-h-24 w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.experience.coverMessage}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  experience: {
+                                    ...current.experience,
+                                    coverMessage: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                    <label className="space-y-2 text-sm">
+                      <span>{isFrench ? "Style animation" : "Motion style"}</span>
+                      <select
+                        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3"
+                        value={previewInvitation.experience.particleStyle}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  experience: {
+                                    ...current.experience,
+                                    particleStyle: event.target.value as InvitationRecord["experience"]["particleStyle"]
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      >
+                        <option value="petals">Petals</option>
+                        <option value="confetti">Confetti</option>
+                        <option value="glow">Glow</option>
+                        <option value="leaves">Leaves</option>
+                        <option value="none">None</option>
+                      </select>
+                    </label>
+                  </SectionCard>
+                </div>
+
+                <div className="grid gap-6 xl:grid-cols-3">
+                  <SectionCard title={isFrench ? "Bloc date" : "Date section"}>
+                    <label className="space-y-2 text-sm">
+                      <span>{isFrench ? "Titre" : "Title"}</span>
+                      <input
+                        className="w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.experience.dateTitle}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  experience: {
+                                    ...current.experience,
+                                    dateTitle: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                    <label className="space-y-2 text-sm">
+                      <span>{isFrench ? "Introduction" : "Intro"}</span>
+                      <textarea
+                        className="min-h-24 w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.experience.dateIntro}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  experience: {
+                                    ...current.experience,
+                                    dateIntro: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                  </SectionCard>
+
+                  <SectionCard title={isFrench ? "Bloc adresse" : "Venue section"}>
+                    <label className="space-y-2 text-sm">
+                      <span>{isFrench ? "Titre" : "Title"}</span>
+                      <input
+                        className="w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.experience.venueTitle}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  experience: {
+                                    ...current.experience,
+                                    venueTitle: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                    <label className="space-y-2 text-sm">
+                      <span>{isFrench ? "Introduction" : "Intro"}</span>
+                      <textarea
+                        className="min-h-24 w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.experience.venueIntro}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  experience: {
+                                    ...current.experience,
+                                    venueIntro: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                    <label className="space-y-2 text-sm">
+                      <span>{isFrench ? "Texte du bouton map" : "Map button label"}</span>
+                      <input
+                        className="w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.experience.venueCtaLabel}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  experience: {
+                                    ...current.experience,
+                                    venueCtaLabel: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                  </SectionCard>
+
+                  <SectionCard title={isFrench ? "Bloc infos invite" : "Guest section"}>
+                    <label className="space-y-2 text-sm">
+                      <span>{isFrench ? "Titre" : "Title"}</span>
+                      <input
+                        className="w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.experience.guestTitle}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  experience: {
+                                    ...current.experience,
+                                    guestTitle: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                    <label className="space-y-2 text-sm">
+                      <span>{isFrench ? "Introduction" : "Intro"}</span>
+                      <textarea
+                        className="min-h-24 w-full rounded-2xl border border-black/10 px-4 py-3"
+                        value={previewInvitation.experience.guestIntro}
+                        onChange={(event) =>
+                          setInvitation((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  experience: {
+                                    ...current.experience,
+                                    guestIntro: event.target.value
+                                  }
+                                }
+                              : current
+                          )
+                        }
+                      />
+                    </label>
+                  </SectionCard>
+                </div>
+
+                <SectionCard title={isFrench ? "Programme" : "Schedule"}>
+                  <label className="space-y-2 text-sm">
+                    <span>{isFrench ? "Titre section" : "Section title"}</span>
                     <input
                       className="w-full rounded-2xl border border-black/10 px-4 py-3"
-                      value={previewInvitation.content.title}
+                      value={previewInvitation.experience.scheduleTitle}
                       onChange={(event) =>
                         setInvitation((current) =>
                           current
                             ? {
                                 ...current,
-                                title: event.target.value,
-                                content: {
-                                  ...current.content,
-                                  title: event.target.value
+                                experience: {
+                                  ...current.experience,
+                                  scheduleTitle: event.target.value
                                 }
                               }
                             : current
@@ -531,43 +866,19 @@ export function InvitationStudio() {
                       }
                     />
                   </label>
-
-                  <label className="space-y-2">
-                    <span className="text-sm">{t.hostName}</span>
-                    <input
-                      className="w-full rounded-2xl border border-black/10 px-4 py-3"
-                      value={previewInvitation.content.subtitle}
-                      onChange={(event) =>
-                        setInvitation((current) =>
-                          current
-                            ? {
-                                ...current,
-                                hostName: event.target.value,
-                                content: {
-                                  ...current.content,
-                                  subtitle: event.target.value
-                                }
-                              }
-                            : current
-                        )
-                      }
-                    />
-                  </label>
-
-                  <label className="space-y-2 md:col-span-2">
-                    <span className="text-sm">{t.description}</span>
+                  <label className="space-y-2 text-sm">
+                    <span>{isFrench ? "Introduction section" : "Section intro"}</span>
                     <textarea
-                      className="min-h-28 w-full rounded-2xl border border-black/10 px-4 py-3"
-                      value={previewInvitation.content.description}
+                      className="min-h-24 w-full rounded-2xl border border-black/10 px-4 py-3"
+                      value={previewInvitation.experience.scheduleIntro}
                       onChange={(event) =>
                         setInvitation((current) =>
                           current
                             ? {
                                 ...current,
-                                description: event.target.value,
-                                content: {
-                                  ...current.content,
-                                  description: event.target.value
+                                experience: {
+                                  ...current.experience,
+                                  scheduleIntro: event.target.value
                                 }
                               }
                             : current
@@ -575,7 +886,76 @@ export function InvitationStudio() {
                       }
                     />
                   </label>
-                </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {previewInvitation.experience.moments.map((moment, index) => (
+                      <div key={index} className="rounded-3xl border border-black/8 bg-[#fffaf4] p-4">
+                        <p className="text-xs uppercase tracking-[0.28em] text-slate-500">{(isFrench ? "Moment" : "Moment") + " " + (index + 1)}</p>
+                        <div className="mt-3 grid gap-3">
+                          <input
+                            className="rounded-2xl border border-black/10 px-4 py-3"
+                            value={moment.time}
+                            onChange={(event) =>
+                              setInvitation((current) =>
+                                current ? updateMomentField(current, index, "time", event.target.value) : current
+                              )
+                            }
+                            placeholder={isFrench ? "Heure" : "Time"}
+                          />
+                          <input
+                            className="rounded-2xl border border-black/10 px-4 py-3"
+                            value={moment.title}
+                            onChange={(event) =>
+                              setInvitation((current) =>
+                                current ? updateMomentField(current, index, "title", event.target.value) : current
+                              )
+                            }
+                            placeholder={isFrench ? "Titre" : "Title"}
+                          />
+                          <textarea
+                            className="min-h-20 rounded-2xl border border-black/10 px-4 py-3"
+                            value={moment.note}
+                            onChange={(event) =>
+                              setInvitation((current) =>
+                                current ? updateMomentField(current, index, "note", event.target.value) : current
+                              )
+                            }
+                            placeholder={isFrench ? "Description" : "Description"}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </SectionCard>
+
+                <SectionCard title={isFrench ? "Details invite" : "Guest details"}>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {previewInvitation.experience.guestDetails.map((detail, index) => (
+                      <div key={index} className="rounded-3xl border border-black/8 bg-[#fffaf4] p-4">
+                        <p className="text-xs uppercase tracking-[0.28em] text-slate-500">{(isFrench ? "Carte" : "Card") + " " + (index + 1)}</p>
+                        <div className="mt-3 grid gap-3">
+                          <input
+                            className="rounded-2xl border border-black/10 px-4 py-3"
+                            value={detail.label}
+                            onChange={(event) =>
+                              setInvitation((current) =>
+                                current ? updateGuestField(current, index, "label", event.target.value) : current
+                              )
+                            }
+                          />
+                          <textarea
+                            className="min-h-24 rounded-2xl border border-black/10 px-4 py-3"
+                            value={detail.value}
+                            onChange={(event) =>
+                              setInvitation((current) =>
+                                current ? updateGuestField(current, index, "value", event.target.value) : current
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </SectionCard>
 
                 <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
                   <label className="space-y-2">
@@ -602,7 +982,7 @@ export function InvitationStudio() {
                         )
                       }
                     >
-                      {form.language === "fr" ? "Retirer l'image" : "Remove image"}
+                      {isFrench ? "Retirer image" : "Remove image"}
                     </button>
                   ) : null}
                 </div>
@@ -628,7 +1008,7 @@ export function InvitationStudio() {
                 {publicUrl ? (
                   <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4">
                     <p className="text-sm uppercase tracking-[0.24em] text-emerald-700">{t.publicLink}</p>
-                    <a className="mt-2 block font-medium text-emerald-900 underline" href={publicUrl} target="_blank">
+                    <a className="mt-2 block font-medium text-emerald-900 underline" href={publicUrl} target="_blank" rel="noreferrer">
                       {publicUrl}
                     </a>
                   </div>

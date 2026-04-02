@@ -8,6 +8,8 @@ export type EventType =
   | "generic";
 export type LayoutBlockType = "hero" | "details" | "message" | "gallery" | "footer";
 export type TextAlign = "left" | "center" | "right";
+export type ParticleStyle = "petals" | "confetti" | "glow" | "leaves" | "none";
+export type CoverStyle = "envelope" | "veil" | "monogram" | "minimal";
 
 export interface ColorPalette {
   background: string;
@@ -45,6 +47,37 @@ export interface InvitationContent {
   ctaLabel: string;
 }
 
+export interface InvitationMoment {
+  time: string;
+  title: string;
+  note: string;
+}
+
+export interface GuestDetail {
+  label: string;
+  value: string;
+}
+
+export interface InvitationExperienceConfig {
+  coverHeadline: string;
+  coverMessage: string;
+  openingLabel: string;
+  dateTitle: string;
+  dateIntro: string;
+  venueTitle: string;
+  venueIntro: string;
+  scheduleTitle: string;
+  scheduleIntro: string;
+  guestTitle: string;
+  guestIntro: string;
+  signatureLine: string;
+  venueCtaLabel: string;
+  particleStyle: ParticleStyle;
+  coverStyle: CoverStyle;
+  moments: InvitationMoment[];
+  guestDetails: GuestDetail[];
+}
+
 export interface InvitationFormData {
   eventType: EventType;
   language: Language;
@@ -76,6 +109,7 @@ export interface InvitationRecord extends InvitationFormData {
   updatedAt: string;
   content: InvitationContent;
   design: InvitationDesign;
+  experience: InvitationExperienceConfig;
 }
 
 export interface InvitationGeneratePayload {

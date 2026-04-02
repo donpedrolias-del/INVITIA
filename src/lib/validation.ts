@@ -1,5 +1,36 @@
 import { z } from "zod";
 
+const momentSchema = z.object({
+  time: z.string(),
+  title: z.string(),
+  note: z.string()
+});
+
+const guestDetailSchema = z.object({
+  label: z.string(),
+  value: z.string()
+});
+
+const experienceSchema = z.object({
+  coverHeadline: z.string(),
+  coverMessage: z.string(),
+  openingLabel: z.string(),
+  dateTitle: z.string(),
+  dateIntro: z.string(),
+  venueTitle: z.string(),
+  venueIntro: z.string(),
+  scheduleTitle: z.string(),
+  scheduleIntro: z.string(),
+  guestTitle: z.string(),
+  guestIntro: z.string(),
+  signatureLine: z.string(),
+  venueCtaLabel: z.string(),
+  particleStyle: z.enum(["petals", "confetti", "glow", "leaves", "none"]),
+  coverStyle: z.enum(["envelope", "veil", "monogram", "minimal"]),
+  moments: z.array(momentSchema),
+  guestDetails: z.array(guestDetailSchema)
+});
+
 export const invitationGenerateSchema = z.object({
   eventType: z.enum(["wedding", "birthday", "baptism", "corporate", "generic"]),
   language: z.enum(["fr", "en"]),
@@ -54,7 +85,8 @@ export const invitationCreateSchema = invitationGenerateSchema.extend({
         spacing: z.enum(["tight", "normal", "airy"])
       })
     )
-  })
+  }),
+  experience: experienceSchema
 });
 
 export const invitationUpdateSchema = invitationCreateSchema.partial();
