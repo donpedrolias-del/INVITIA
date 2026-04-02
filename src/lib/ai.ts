@@ -270,18 +270,77 @@ function buildExperience(input: InvitationFormData): InvitationExperienceConfig 
   const title = input.title || (isFrench ? "Notre celebration" : "Our celebration");
   const mood = input.theme || preset.theme;
 
-  const coverMessages =
-    isFrench
-      ? [
-          "Une invitation privee pensee dans un esprit " + mood.toLowerCase() + ".",
-          "Faites glisser la couverture pour decouvrir une experience imaginee autour de " + title.toLowerCase() + ".",
-          "Chaque ecran a ete travaille pour que cette invitation ne ressemble a aucune autre."
+  const openingLabels = isFrench
+    ? {
+        wedding: "Faire-part de mariage",
+        birthday: "Invitation anniversaire",
+        baptism: "Invitation de bapteme",
+        corporate: "Invitation privee",
+        generic: "Invitation signature"
+      }
+    : {
+        wedding: "Wedding invitation",
+        birthday: "Birthday invitation",
+        baptism: "Baptism invitation",
+        corporate: "Private invitation",
+        generic: "Signature invitation"
+      };
+
+  const coverMessagesByEvent = isFrench
+    ? {
+        wedding: [
+          "Une ouverture delicate facon faire-part, pensee pour annoncer une union avec elegance.",
+          "Faites glisser cette couverture pour entrer dans un univers romantique et editorial.",
+          "Cette invitation de mariage a ete composee comme une piece precieuse et intime."
+        ],
+        birthday: [
+          "Une ouverture plus festive, lumineuse et joyeuse pour installer le ton des la premiere seconde.",
+          "Cette couverture annonce une celebration chic, vivante et pleine de personnalite.",
+          "On entre ici dans une invitation anniversaire qui assume le rythme, la couleur et le plaisir."
+        ],
+        baptism: [
+          "Une ouverture douce, calme et lumineuse pour introduire un moment de grace.",
+          "Cette couverture a ete imaginee comme une parenthese tendre et elegante.",
+          "L experience s ouvre avec retenue, douceur et une vraie sensation de purete."
+        ],
+        corporate: [
+          "Une ouverture sobre, affutee et premium pour poser une invitation professionnelle haut de gamme.",
+          "Cette couverture met en avant la clarte, la precision et une direction visuelle plus executive.",
+          "Des la premiere vue, on comprend qu il s agit d une invitation privee et bien orchestree."
+        ],
+        generic: [
+          "Une ouverture signature pensee pour surprendre et donner une vraie identite a l invitation.",
+          "Cette couverture introduit une experience sur mesure, elegante et differente des modeles classiques.",
+          "Le premier ecran donne le ton avec une ambiance " + mood.toLowerCase() + " tres assumee."
         ]
-      : [
-          "A private invitation shaped with a " + mood.toLowerCase() + " atmosphere.",
-          "Swipe the cover to reveal the experience created around " + title.toLowerCase() + ".",
-          "Each screen has been crafted so this invitation feels distinct from every other one."
-        ];
+      }
+    : {
+        wedding: [
+          "A delicate opening inspired by a refined wedding announcement.",
+          "Swipe this cover to enter a romantic, editorial atmosphere.",
+          "This wedding invitation has been composed like an intimate keepsake."
+        ],
+        birthday: [
+          "A brighter, more festive opening designed to set the mood instantly.",
+          "This cover introduces a celebration that feels chic, playful, and full of personality.",
+          "The invitation opens with rhythm, color, and a stronger sense of occasion."
+        ],
+        baptism: [
+          "A soft and luminous opening created to introduce a graceful moment.",
+          "This cover was imagined as a tender and elegant pause.",
+          "The experience begins with calm, purity, and restraint."
+        ],
+        corporate: [
+          "A sharper, more premium opening designed for a high-end professional invitation.",
+          "This cover emphasizes clarity, precision, and executive polish.",
+          "From the first screen, the invitation feels private, elevated, and carefully orchestrated."
+        ],
+        generic: [
+          "A signature opening designed to surprise and establish a strong identity.",
+          "This cover introduces a tailored experience that feels more elevated than a standard template.",
+          "The first screen sets the tone with a confident " + mood.toLowerCase() + " atmosphere."
+        ]
+      };
 
   const dateIntros =
     isFrench
@@ -337,8 +396,8 @@ function buildExperience(input: InvitationFormData): InvitationExperienceConfig 
 
   return {
     coverHeadline: host,
-    coverMessage: pickVariant(coverMessages, seed),
-    openingLabel: isFrench ? "Invitation exclusive" : "Exclusive invitation",
+    coverMessage: pickVariant(coverMessagesByEvent[input.eventType], seed),
+    openingLabel: openingLabels[input.eventType],
     dateTitle: isFrench ? "Date et heure" : "Date and time",
     dateIntro: pickVariant(dateIntros, seed, 1),
     venueTitle: isFrench ? "Adresse et acces" : "Address and directions",

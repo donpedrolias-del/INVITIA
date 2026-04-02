@@ -3,6 +3,7 @@
 import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { InvitationRecord, ParticleStyle } from "@/lib/types";
 
+
 interface CountdownState {
   days: string;
   hours: string;
@@ -141,6 +142,52 @@ function coverSurface(coverStyle: InvitationRecord["experience"]["coverStyle"]) 
   return "bg-[linear-gradient(145deg,rgba(172,187,150,0.92),rgba(98,103,76,0.96))]";
 }
 
+function openingTheme(invitation: InvitationRecord) {
+  if (invitation.eventType === "wedding") {
+    return {
+      shell: "bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_24%),linear-gradient(180deg,rgba(58,34,45,0.12),rgba(58,34,45,0.3))]",
+      card: "border-[#f0dfd7]/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.05))]",
+      badge: "bg-white/10 text-white/88",
+      ornament: "ring-[#f0d6cf]/60 bg-[radial-gradient(circle_at_top,#fff6f2,#ecd7cb_65%,#d7b4a6)] text-[#7e4d55]",
+      motif: "Romance"
+    };
+  }
+  if (invitation.eventType === "birthday") {
+    return {
+      shell: "bg-[radial-gradient(circle_at_top,rgba(255,244,223,0.24),transparent_22%),linear-gradient(180deg,rgba(65,35,23,0.12),rgba(65,35,23,0.26))]",
+      card: "border-[#f6ddbc]/70 bg-[linear-gradient(180deg,rgba(255,248,236,0.16),rgba(255,230,190,0.08))]",
+      badge: "bg-white/12 text-[#fff5e2]",
+      ornament: "ring-[#ffd08d]/70 bg-[radial-gradient(circle_at_top,#fff4d9,#f0bf5f_62%,#cf7a2e)] text-[#7c3f17]",
+      motif: "Celebration"
+    };
+  }
+  if (invitation.eventType === "baptism") {
+    return {
+      shell: "bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.22),transparent_24%),linear-gradient(180deg,rgba(57,71,109,0.08),rgba(57,71,109,0.2))]",
+      card: "border-[#dce6f7]/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(231,240,252,0.07))]",
+      badge: "bg-white/14 text-[#f6fbff]",
+      ornament: "ring-[#d7e4f8]/70 bg-[radial-gradient(circle_at_top,#ffffff,#eaf2ff_60%,#c0d1eb)] text-[#6b7fae]",
+      motif: "Grace"
+    };
+  }
+  if (invitation.eventType === "corporate") {
+    return {
+      shell: "bg-[radial-gradient(circle_at_top,rgba(90,198,190,0.12),transparent_20%),linear-gradient(180deg,rgba(10,16,28,0.2),rgba(10,16,28,0.42))]",
+      card: "border-[#72c9c0]/40 bg-[linear-gradient(180deg,rgba(18,31,47,0.34),rgba(18,31,47,0.16))]",
+      badge: "bg-white/8 text-[#dff7f4]",
+      ornament: "ring-[#72c9c0]/50 bg-[radial-gradient(circle_at_top,#ebfffd,#98e3da_58%,#3b918f)] text-[#154444]",
+      motif: "Private Brief"
+    };
+  }
+  return {
+    shell: "bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_24%),linear-gradient(180deg,rgba(51,39,58,0.12),rgba(51,39,58,0.24))]",
+    card: "border-[#e6dccf]/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.05))]",
+    badge: "bg-white/10 text-white/88",
+    ornament: "ring-[#e7d5c0]/60 bg-[radial-gradient(circle_at_top,#fff5e9,#e8cfa8_64%,#c48c5a)] text-[#6f4d40]",
+    motif: "Signature"
+  };
+}
+
 export function InvitationExperience({ invitation }: { invitation: InvitationRecord }) {
   const isFrench = invitation.language === "fr";
   const [isOpened, setIsOpened] = useState(false);
@@ -151,6 +198,7 @@ export function InvitationExperience({ invitation }: { invitation: InvitationRec
   const eventDate = useMemo(() => formatLongDate(invitation.dateTime, invitation.language), [invitation.dateTime, invitation.language]);
   const eventTime = useMemo(() => formatTime(invitation.dateTime, invitation.language), [invitation.dateTime, invitation.language]);
   const particles = useMemo(() => buildParticles(invitation), [invitation]);
+  const openingLook = useMemo(() => openingTheme(invitation), [invitation]);
 
   useEffect(() => {
     const timer = window.setInterval(() => setCountdown(getCountdown(invitation.dateTime)), 1000);
@@ -195,15 +243,20 @@ export function InvitationExperience({ invitation }: { invitation: InvitationRec
           onTouchEnd={onTouchEnd}
         >
           <div className={"absolute inset-0 " + coverSurface(invitation.experience.coverStyle)} />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.2),transparent_24%),linear-gradient(180deg,rgba(37,27,22,0.14),rgba(37,27,22,0.24))]" />
+          <div className={"absolute inset-0 " + openingLook.shell} />
           <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.22),transparent_12%),radial-gradient(circle_at_70%_28%,rgba(92,74,62,0.18),transparent_14%),radial-gradient(circle_at_34%_78%,rgba(92,74,62,0.16),transparent_13%)]" />
 
           <div className="relative flex min-h-screen flex-col items-center justify-between px-8 py-10 text-center text-white">
-            <div className="w-full rounded-[36px] border border-white/20 bg-black/10 px-4 py-3 text-[10px] uppercase tracking-[0.5em] backdrop-blur-sm">
+            <div className={"w-full rounded-[36px] border border-white/20 px-4 py-3 text-[10px] uppercase tracking-[0.5em] backdrop-blur-sm " + openingLook.badge}>
               {invitation.experience.openingLabel}
             </div>
 
-            <div className="w-full rounded-[42px] border border-white/20 bg-white/10 px-8 py-12 shadow-[0_30px_120px_rgba(44,33,24,0.24)] backdrop-blur-md">
+            <div className={"w-full rounded-[42px] px-8 py-12 shadow-[0_30px_120px_rgba(44,33,24,0.24)] backdrop-blur-md border " + openingLook.card}>
+              <div className="mb-7 flex items-center justify-center">
+                <div className={"flex h-20 w-20 items-center justify-center rounded-full ring-1 shadow-[0_16px_40px_rgba(25,16,12,0.24)] " + openingLook.ornament}>
+                  <span className="text-[11px] uppercase tracking-[0.32em]">{openingLook.motif}</span>
+                </div>
+              </div>
               <p className="text-xs uppercase tracking-[0.45em] text-white/75">{invitation.content.eyebrow}</p>
               <p className="mt-7 font-[var(--font-display)] text-5xl leading-none text-white drop-shadow-[0_12px_28px_rgba(0,0,0,0.28)]">
                 {invitation.experience.coverHeadline}
@@ -213,7 +266,7 @@ export function InvitationExperience({ invitation }: { invitation: InvitationRec
               <button
                 type="button"
                 onClick={openInvitation}
-                className="mt-10 inline-flex h-24 w-24 items-center justify-center rounded-full border border-[#ead8cb] bg-[radial-gradient(circle_at_top,#f8efe9,#d9c2b4_70%,#b78c74)] font-[var(--font-display)] text-3xl text-[#6f4d40] shadow-[0_16px_50px_rgba(57,34,27,0.35)] transition hover:scale-105"
+                className={"mt-10 inline-flex h-24 w-24 items-center justify-center rounded-full border font-[var(--font-display)] text-3xl shadow-[0_16px_50px_rgba(57,34,27,0.35)] transition hover:scale-105 " + openingLook.ornament}
               >
                 {isFrench ? "Ouvrir" : "Open"}
               </button>
