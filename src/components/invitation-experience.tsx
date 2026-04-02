@@ -199,6 +199,11 @@ export function InvitationExperience({ invitation }: { invitation: InvitationRec
   const eventTime = useMemo(() => formatTime(invitation.dateTime, invitation.language), [invitation.dateTime, invitation.language]);
   const particles = useMemo(() => buildParticles(invitation), [invitation]);
   const openingLook = useMemo(() => openingTheme(invitation), [invitation]);
+  const mediaGallery = useMemo(() => {
+    const unique = Array.from(new Set((invitation.design.media.gallery || []).filter(Boolean)));
+    return unique.length > 0 ? unique : invitation.heroImage ? [invitation.heroImage] : [];
+  }, [invitation]);
+  const video = invitation.design.media.video;
 
   useEffect(() => {
     const timer = window.setInterval(() => setCountdown(getCountdown(invitation.dateTime)), 1000);
@@ -384,6 +389,32 @@ export function InvitationExperience({ invitation }: { invitation: InvitationRec
               ))}
             </div>
           </section>
+
+          {mediaGallery.length > 0 || video ? (
+            <section className="mt-6 rounded-[34px] border border-[#e8dacc] bg-white/92 p-6 shadow-[0_25px_70px_rgba(48,31,18,0.08)]">
+              <div className="text-center">
+                <p className="text-xs uppercase tracking-[0.45em] text-[#8f7059]">{isFrench ? "Galerie" : "Gallery"}</p>
+                <h2 className="mt-3 font-[var(--font-display)] text-4xl text-[#2a1f22]">{isFrench ? "Photos et video" : "Photos and video"}</h2>
+                <p className="mt-3 text-sm leading-7 text-[#77645b]">{isFrench ? "Retrouve ici les images et le clip choisis pour prolonger atmosphere de invitation." : "Find the selected imagery and video here to extend the atmosphere of the invitation."}</p>
+              </div>
+
+              {mediaGallery.length > 0 ? (
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  {mediaGallery.slice(0, 6).map((image, index) => (
+                    <div key={image + index} className={index === 0 && mediaGallery.length % 2 === 1 ? "sm:col-span-2" : ""}>
+                      <img src={image} alt={"Invitation gallery " + (index + 1)} className="h-56 w-full rounded-[24px] object-cover shadow-sm" />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+
+              {video ? (
+                <div className="mt-4 overflow-hidden rounded-[28px] border border-black/10 bg-black/90">
+                  <video src={video} controls className="h-72 w-full object-cover" />
+                </div>
+              ) : null}
+            </section>
+          ) : null}
 
           <section className="mt-6 mb-10 rounded-[34px] border border-[#e8dacc] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(247,239,231,0.92))] p-6 shadow-[0_25px_70px_rgba(48,31,18,0.08)]">
             <div className="text-center">

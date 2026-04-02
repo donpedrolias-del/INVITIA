@@ -443,6 +443,10 @@ const invitationDesignSchema = z.object({
     body: z.string(),
     accent: z.string()
   }),
+  media: z.object({
+    gallery: z.array(z.string()),
+    video: z.string()
+  }),
   layoutConfig: z.array(
     z.object({
       id: z.string(),
@@ -517,6 +521,10 @@ function sanitizeDesign(
       body: "var(--font-body)",
       accent: "var(--font-accent)"
     },
+    media: {
+      gallery: Array.isArray((design as any).media?.gallery) ? (design as any).media.gallery.filter(Boolean) : fallback.media.gallery,
+      video: typeof (design as any).media?.video === "string" ? (design as any).media.video : fallback.media.video
+    },
     layoutConfig:
       design.layoutConfig.length > 0
         ? design.layoutConfig.map((block) => ({
@@ -584,6 +592,10 @@ export function generateInvitationDesign(
         heading: "var(--font-display)",
         body: "var(--font-body)",
         accent: "var(--font-accent)"
+      },
+      media: {
+        gallery: normalized.heroImage ? [normalized.heroImage] : [],
+        video: ""
       },
       layoutConfig: getLayoutBlocks(normalized.language)
     },

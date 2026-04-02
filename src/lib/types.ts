@@ -25,6 +25,11 @@ export interface TypographyConfig {
   accent: string;
 }
 
+export interface InvitationMediaConfig {
+  gallery: string[];
+  video: string;
+}
+
 export interface LayoutBlock {
   id: string;
   type: LayoutBlockType;
@@ -99,6 +104,7 @@ export interface InvitationDesign {
   colorPalette: ColorPalette;
   typography: TypographyConfig;
   layoutConfig: LayoutBlock[];
+  media: InvitationMediaConfig;
 }
 
 export interface InvitationRecord extends InvitationFormData {

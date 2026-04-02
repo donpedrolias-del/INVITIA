@@ -84,7 +84,11 @@ export const invitationCreateSchema = invitationGenerateSchema.extend({
         align: z.enum(["left", "center", "right"]),
         spacing: z.enum(["tight", "normal", "airy"])
       })
-    )
+    ),
+    media: z.object({
+      gallery: z.array(z.string()),
+      video: z.string()
+    })
   }),
   experience: experienceSchema
 });

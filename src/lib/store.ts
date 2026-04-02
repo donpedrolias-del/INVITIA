@@ -54,7 +54,8 @@ function hydrateInvitation(row: Record<string, any>): InvitationRecord {
           tone: row.design.tone || fallback.design.tone,
           colorPalette: row.design.colorPalette || fallback.design.colorPalette,
           typography: row.design.typography || fallback.design.typography,
-          layoutConfig: row.design.layoutConfig || fallback.design.layoutConfig
+          layoutConfig: row.design.layoutConfig || fallback.design.layoutConfig,
+          media: row.design.media || fallback.design.media
         }
       : fallback.design,
     experience: row.experience || embeddedExperience || fallback.experience
@@ -126,7 +127,11 @@ export async function updateInvitation(id: string, updates: Partial<InvitationRe
         ...existing.design.typography,
         ...(updates.design?.typography || {})
       },
-      layoutConfig: updates.design?.layoutConfig || existing.design.layoutConfig
+      layoutConfig: updates.design?.layoutConfig || existing.design.layoutConfig,
+      media: {
+        ...existing.design.media,
+        ...(updates.design?.media || {})
+      }
     },
     experience: {
       ...existing.experience,

@@ -31,6 +31,9 @@ export function InvitationPreview({
     layoutConfig: invitation.design.layoutConfig
   };
 
+  const gallery = invitation.design.media.gallery.length > 0 ? invitation.design.media.gallery : heroImage ? [heroImage] : [];
+  const video = invitation.design.media.video;
+
   return (
     <article
       className={cn(
@@ -38,7 +41,7 @@ export function InvitationPreview({
         publicMode ? "min-h-screen rounded-none border-none shadow-none" : ""
       )}
       style={{
-        background: `linear-gradient(180deg, ${design.colorPalette.surface}, ${design.colorPalette.background})`,
+        background: "linear-gradient(180deg, " + design.colorPalette.surface + ", " + design.colorPalette.background + ")",
         color: design.colorPalette.text
       }}
     >
@@ -56,21 +59,15 @@ export function InvitationPreview({
                   <div
                     className="absolute inset-0 bg-hero-haze"
                     style={{
-                      backgroundColor: `${design.colorPalette.background}b3`
+                      backgroundColor: design.colorPalette.background + "b3"
                     }}
                   />
                 </div>
                 <div className="relative z-10 max-w-3xl space-y-4">
-                  <p
-                    className="text-sm uppercase tracking-[0.35em]"
-                    style={{ color: design.colorPalette.accent }}
-                  >
+                  <p className="text-sm uppercase tracking-[0.35em]" style={{ color: design.colorPalette.accent }}>
                     {content.eyebrow}
                   </p>
-                  <h1
-                    className="text-4xl md:text-6xl"
-                    style={{ fontFamily: design.typography.heading }}
-                  >
+                  <h1 className="text-4xl md:text-6xl" style={{ fontFamily: design.typography.heading }}>
                     {content.title}
                   </h1>
                   <p className="text-lg md:text-xl" style={{ fontFamily: design.typography.accent }}>
@@ -86,7 +83,7 @@ export function InvitationPreview({
               <section key={block.id} className={cn("flex flex-col px-8 md:px-12", getAlignClass(block), getSpacingClass(block))}>
                 <div className="grid w-full gap-4 md:grid-cols-3">
                   {dateTime ? (
-                    <div className="rounded-3xl border border-black/10 p-5" style={{ backgroundColor: `${design.colorPalette.surface}` }}>
+                    <div className="rounded-3xl border border-black/10 p-5" style={{ backgroundColor: design.colorPalette.surface }}>
                       <p className="text-xs uppercase tracking-[0.2em]" style={{ color: design.colorPalette.accent }}>
                         {content.dateLabel}
                       </p>
@@ -94,7 +91,7 @@ export function InvitationPreview({
                     </div>
                   ) : null}
                   {venue ? (
-                    <div className="rounded-3xl border border-black/10 p-5" style={{ backgroundColor: `${design.colorPalette.surface}` }}>
+                    <div className="rounded-3xl border border-black/10 p-5" style={{ backgroundColor: design.colorPalette.surface }}>
                       <p className="text-xs uppercase tracking-[0.2em]" style={{ color: design.colorPalette.accent }}>
                         {content.venueLabel}
                       </p>
@@ -102,7 +99,7 @@ export function InvitationPreview({
                     </div>
                   ) : null}
                   {dressCode ? (
-                    <div className="rounded-3xl border border-black/10 p-5" style={{ backgroundColor: `${design.colorPalette.surface}` }}>
+                    <div className="rounded-3xl border border-black/10 p-5" style={{ backgroundColor: design.colorPalette.surface }}>
                       <p className="text-xs uppercase tracking-[0.2em]" style={{ color: design.colorPalette.accent }}>
                         {content.dressCodeLabel}
                       </p>
@@ -126,9 +123,18 @@ export function InvitationPreview({
           if (block.type === "gallery") {
             return (
               <section key={block.id} className={cn("flex flex-col px-8 md:px-12", getAlignClass(block), getSpacingClass(block))}>
-                <div className="relative h-72 w-full overflow-hidden rounded-[28px]">
-                  <InvitationImage src={heroImage} alt={content.title} className="h-full w-full object-cover" />
+                <div className="grid gap-4 md:grid-cols-2">
+                  {gallery.slice(0, 4).map((image, index) => (
+                    <div key={image + index} className={cn("overflow-hidden rounded-[28px]", index === 0 && gallery.length === 1 ? "md:col-span-2" : "")}>
+                      <InvitationImage src={image} alt={content.title + " media " + (index + 1)} className="h-56 w-full object-cover" />
+                    </div>
+                  ))}
                 </div>
+                {video ? (
+                  <div className="overflow-hidden rounded-[28px] border border-black/10 bg-black/90">
+                    <video src={video} controls className="h-72 w-full object-cover" />
+                  </div>
+                ) : null}
               </section>
             );
           }
